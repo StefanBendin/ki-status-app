@@ -33,6 +33,10 @@ function stripOwner(entry, requesterOwnerId) {
   return { ...rest, isOwner: Boolean(ownerId) && ownerId === requesterOwnerId };
 }
 
+app.get("/api/health", (req, res) => {
+  res.json({ storage: process.env.DATABASE_URL ? "postgres" : "file (fluechtig, geht bei Neustart verloren)" });
+});
+
 app.get(
   "/api/entries",
   asyncHandler(async (req, res) => {
