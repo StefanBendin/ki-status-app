@@ -1,6 +1,16 @@
 const el = (id) => document.getElementById(id);
 const PROGRESS_STEPS = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
+function getOwnerId() {
+  let id = localStorage.getItem("ownerId");
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem("ownerId", id);
+  }
+  return id;
+}
+const OWNER_ID = getOwnerId();
+
 async function api(path, options = {}) {
   const headers = Object.assign({ "Content-Type": "application/json" }, options.headers || {});
   const res = await fetch(path, Object.assign({}, options, { headers }));
@@ -39,6 +49,11 @@ function renderEntries(entries) {
     const progressOptions = PROGRESS_STEPS.map(
       (p) => `<option value="${p}" ${p === entry.progress ? "selected" : ""}>${p}%</option>`
     ).join("");
+    const progressControl = entry.isOwner
+      ? `<label class="progress-select-label">Fortschritt ändern
+          <select class="progress-select">${progressOptions}</select>
+        </label>`
+      : `<span class="muted-note">Nur der Ersteller kann den Fortschritt ändern</span>`;
     li.innerHTML = `
       <div class="meta">
         <span><span class="who">${escapeHtml(entry.name)}</span> <span class="firma">${escapeHtml(entry.firma || "")}</span></span>
@@ -50,9 +65,7 @@ function renderEntries(entries) {
         <span class="progress-label">${entry.progress}%</span>
       </div>
       <div class="entry-actions">
-        <label class="progress-select-label">Fortschritt ändern
-          <select class="progress-select">${progressOptions}</select>
-        </label>
+        ${progressControl}
         <button type="button" class="ghost-btn delete-btn">Löschen</button>
       </div>
     `;
@@ -62,7 +75,7 @@ function renderEntries(entries) {
 
 async function loadEntries() {
   try {
-    const data = await api("/api/entries");
+    const data = await api(`/api/entries?ownerId=${encodeURIComponent(OWNER_ID)}`);
     renderEntries(data.entries);
   } catch (err) {
     console.error(err);
@@ -82,6 +95,7 @@ el("entryForm").addEventListener("submit", async (e) => {
         firma: form.get("firma"),
         thema: form.get("thema"),
         progress: form.get("progress"),
+        ownerId: OWNER_ID,
       }),
     });
     e.target.reset();
@@ -119,7 +133,7 @@ el("entryList").addEventListener("change", async (e) => {
   try {
     await api(`/api/entries/${id}`, {
       method: "PUT",
-      body: JSON.stringify({ progress: e.target.value }),
+      body: JSON.stringify({ progress: e.target.value, ownerId: OWNER_ID }),
     });
     loadEntries();
   } catch (err) {

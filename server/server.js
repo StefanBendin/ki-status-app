@@ -28,11 +28,17 @@ function asyncHandler(handler) {
   };
 }
 
+function stripOwner(entry, requesterOwnerId) {
+  const { ownerId, ...rest } = entry;
+  return { ...rest, isOwner: Boolean(ownerId) && ownerId === requesterOwnerId };
+}
+
 app.get(
   "/api/entries",
   asyncHandler(async (req, res) => {
+    const requesterOwnerId = clean(req.query.ownerId, 200);
     const entries = await db.listEntries();
-    res.json({ entries });
+    res.json({ entries: entries.map((e) => stripOwner(e, requesterOwnerId)) });
   })
 );
 
@@ -43,11 +49,12 @@ app.post(
     const firma = clean(req.body.firma, 100);
     const thema = clean(req.body.thema, 200);
     const progress = parseProgress(req.body.progress);
+    const ownerId = clean(req.body.ownerId, 200);
     if (!name || !firma || !thema || progress === null) {
       return res.status(400).json({ error: "Name, Firma, Thema und Fortschritt (0-100% in 10er-Schritten) sind erforderlich." });
     }
-    const entry = await db.createEntry({ name, firma, thema, progress });
-    res.status(201).json({ entry });
+    const entry = await db.createEntry({ name, firma, thema, progress, ownerId });
+    res.status(201).json({ entry: stripOwner(entry, ownerId) });
   })
 );
 
@@ -56,9 +63,14 @@ app.put(
   asyncHandler(async (req, res) => {
     const progress = parseProgress(req.body.progress);
     if (progress === null) return res.status(400).json({ error: "Fortschritt muss 0-100% in 10er-Schritten sein." });
+    const requesterOwnerId = clean(req.body.ownerId, 200);
+    const existing = await db.getEntry(req.params.id);
+    if (!existing) return res.status(404).json({ error: "Eintrag nicht gefunden." });
+    if (existing.ownerId && existing.ownerId !== requesterOwnerId) {
+      return res.status(403).json({ error: "Nur der Ersteller kann diesen Eintrag ändern." });
+    }
     const entry = await db.updateProgress(req.params.id, progress);
-    if (!entry) return res.status(404).json({ error: "Eintrag nicht gefunden." });
-    res.json({ entry });
+    res.json({ entry: stripOwner(entry, requesterOwnerId) });
   })
 );
 

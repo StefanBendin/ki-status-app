@@ -264,6 +264,12 @@ input:focus, textarea:focus, select:focus {
   font-size: 0.85rem;
 }
 
+.muted-note {
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
 .entry-actions .ghost-btn {
   font-size: 0.8rem;
   padding: 6px 10px;

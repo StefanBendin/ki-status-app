@@ -22,6 +22,7 @@ function createPostgresDb(connectionString) {
         updated_at TIMESTAMPTZ NOT NULL
       )`
     )
+    .then(() => pool.query(`ALTER TABLE entries ADD COLUMN IF NOT EXISTS owner_id TEXT NOT NULL DEFAULT ''`))
     .catch((err) => {
       console.error("Postgres-Initialisierung fehlgeschlagen:", err.message);
     });
@@ -34,6 +35,7 @@ function createPostgresDb(connectionString) {
       thema: row.thema,
       progress: row.progress,
       updatedAt: row.updated_at.toISOString(),
+      ownerId: row.owner_id,
     };
   }
 
@@ -44,15 +46,21 @@ function createPostgresDb(connectionString) {
       return rows.map(rowToEntry);
     },
 
-    async createEntry({ name, firma, thema, progress }) {
+    async getEntry(id) {
+      await ready;
+      const { rows } = await pool.query("SELECT * FROM entries WHERE id = $1", [id]);
+      return rows[0] ? rowToEntry(rows[0]) : null;
+    },
+
+    async createEntry({ name, firma, thema, progress, ownerId }) {
       await ready;
       const id = crypto.randomUUID();
       const updatedAt = new Date();
       await pool.query(
-        "INSERT INTO entries (id, name, firma, thema, progress, updated_at) VALUES ($1, $2, $3, $4, $5, $6)",
-        [id, name, firma, thema, progress, updatedAt]
+        "INSERT INTO entries (id, name, firma, thema, progress, updated_at, owner_id) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+        [id, name, firma, thema, progress, updatedAt, ownerId]
       );
-      return { id, name, firma, thema, progress, updatedAt: updatedAt.toISOString() };
+      return { id, name, firma, thema, progress, updatedAt: updatedAt.toISOString(), ownerId };
     },
 
     async updateProgress(id, progress) {
@@ -99,7 +107,11 @@ function createFileDb() {
       return readAll().sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
     },
 
-    async createEntry({ name, firma, thema, progress }) {
+    async getEntry(id) {
+      return readAll().find((e) => e.id === id) || null;
+    },
+
+    async createEntry({ name, firma, thema, progress, ownerId }) {
       const entries = readAll();
       const entry = {
         id: crypto.randomUUID(),
@@ -108,6 +120,7 @@ function createFileDb() {
         thema,
         progress,
         updatedAt: new Date().toISOString(),
+        ownerId,
       };
       entries.push(entry);
       writeAll(entries);

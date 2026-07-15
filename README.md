@@ -6,7 +6,9 @@ Installierbare Web-App (PWA): Jeder trägt ein, woran er/sie gerade mit KI arbei
 ## Funktionen
 
 - Formular für Name, Firma, Thema und Fortschritt (Auswahl in 10%-Schritten) – ohne Anmeldung
-- Fortschritt wird als Balkengrafik dargestellt und kann pro Eintrag jederzeit per Dropdown angepasst werden
+- Fortschritt wird als Balkengrafik dargestellt; nur wer den Eintrag erstellt hat, kann ihn
+  per Dropdown ändern (Erkennung über eine anonyme, im Browser gespeicherte Geräte-ID – kein
+  Login). Auf anderen Geräten/Browsern erscheint statt des Dropdowns ein Hinweistext.
 - Gemeinsame Liste aller Einträge, neueste zuerst
 - Löschen ist durch ein gemeinsames Passwort geschützt (siehe unten), damit nicht jeder Einträge anderer löschen kann
 - Installierbar auf jedem Smartphone als App (PWA: Manifest + Service Worker)
