@@ -14,8 +14,9 @@ Installierbare Web-App (PWA): Jeder trägt ein, woran er/sie gerade mit KI arbei
 ## Lösch-Passwort
 
 Beim Löschen eines Eintrags wird ein Passwort abgefragt. Es wird über die Umgebungsvariable
-`DELETE_PASSWORD` gesetzt. Lokal ist der Standard `admin123` (siehe `server/server.js`) –
-für den produktiven Einsatz unbedingt ein eigenes Passwort in Render setzen (siehe unten).
+`DELETE_PASSWORD` gesetzt. Ist die Variable nicht gesetzt, gilt lokal ein Standardwert (siehe
+`server/server.js`, dort nicht öffentlich dokumentiert) – für den produktiven Einsatz
+unbedingt ein eigenes Passwort in Render setzen (siehe unten).
 
 ## Lokal starten
 

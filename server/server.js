@@ -5,7 +5,7 @@ const db = require("./db");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const DELETE_PASSWORD = process.env.DELETE_PASSWORD || "admin123";
+const DELETE_PASSWORD = process.env.DELETE_PASSWORD || "Cat#Niom4";
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "..", "public")));
