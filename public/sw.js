@@ -1,4 +1,4 @@
-const CACHE_NAME = "ki-status-v3";
+const CACHE_NAME = "ki-status-v4";
 const APP_SHELL = ["/", "/index.html", "/style.css", "/app.js", "/manifest.json", "/icons/icon-192.png", "/icons/icon-512.png", "/assets/egruppe-logo.png"];
 
 self.addEventListener("install", (event) => {

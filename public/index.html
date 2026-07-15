@@ -22,7 +22,14 @@
     <button id="refreshBtn" class="ghost-btn">Aktualisieren</button>
   </header>
 
-  <main class="view">
+  <main id="welcomeView" class="view">
+    <section class="card welcome-card">
+      <p>Tragt bitte hier ein, an was ihr gerade mit der KI arbeitet. Damit ist sichergestellt, dass verwandte Themen nicht mehrfach bearbeitet werden.</p>
+      <button id="startBtn" class="primary-btn">Weiter</button>
+    </section>
+  </main>
+
+  <main id="appView" class="view hidden">
     <section class="card">
       <h2>Neuer Eintrag</h2>
       <form id="entryForm" class="form">

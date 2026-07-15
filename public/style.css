@@ -71,6 +71,25 @@ body {
   gap: 16px;
 }
 
+.welcome-card {
+  text-align: center;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.welcome-card p {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.welcome-card .primary-btn {
+  align-self: center;
+  padding: 12px 32px;
+}
+
 .card {
   background: var(--surface);
   border-radius: var(--radius);

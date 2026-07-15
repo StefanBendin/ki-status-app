@@ -129,8 +129,12 @@ el("entryList").addEventListener("change", async (e) => {
 
 el("refreshBtn").addEventListener("click", loadEntries);
 
-loadEntries();
-setInterval(loadEntries, 15000);
+el("startBtn").addEventListener("click", () => {
+  el("welcomeView").classList.add("hidden");
+  el("appView").classList.remove("hidden");
+  loadEntries();
+  setInterval(loadEntries, 15000);
+});
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
