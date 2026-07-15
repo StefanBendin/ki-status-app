@@ -1,12 +1,13 @@
 # KI-Status Board
 
 Installierbare Web-App (PWA): Jeder trägt ein, woran er/sie gerade mit KI arbeitet
-(Name, Firma, Thema, Statusmeldung). Alle Einträge sind für alle Nutzer sichtbar, kein Login nötig.
+(Name, Firma, Thema, Fortschritt in %). Alle Einträge sind für alle Nutzer sichtbar, kein Login nötig.
 
 ## Funktionen
 
-- Formular für Name, Firma, Thema, Statusmeldung – ohne Anmeldung
-- Gemeinsame Liste aller Einträge, neueste zuerst, Status frei aktualisierbar
+- Formular für Name, Firma, Thema und Fortschritt (Auswahl in 10%-Schritten) – ohne Anmeldung
+- Fortschritt wird als Balkengrafik dargestellt und kann pro Eintrag jederzeit per Dropdown angepasst werden
+- Gemeinsame Liste aller Einträge, neueste zuerst
 - Löschen ist durch ein gemeinsames Passwort geschützt (siehe unten), damit nicht jeder Einträge anderer löschen kann
 - Installierbar auf jedem Smartphone als App (PWA: Manifest + Service Worker)
 - Daten werden als JSON-Datei gespeichert (`server/data/entries.json`), kein Datenbankserver nötig

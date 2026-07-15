@@ -1,4 +1,5 @@
 const el = (id) => document.getElementById(id);
+const PROGRESS_STEPS = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
 async function api(path, options = {}) {
   const headers = Object.assign({ "Content-Type": "application/json" }, options.headers || {});
@@ -35,15 +36,23 @@ function renderEntries(entries) {
     const li = document.createElement("li");
     li.className = "entry-item";
     li.dataset.id = entry.id;
+    const progressOptions = PROGRESS_STEPS.map(
+      (p) => `<option value="${p}" ${p === entry.progress ? "selected" : ""}>${p}%</option>`
+    ).join("");
     li.innerHTML = `
       <div class="meta">
         <span><span class="who">${escapeHtml(entry.name)}</span> <span class="firma">${escapeHtml(entry.firma || "")}</span></span>
         <span class="time">${formatTime(entry.updatedAt)}</span>
       </div>
       <p class="thema">${escapeHtml(entry.thema)}</p>
-      <p class="status">${escapeHtml(entry.status)}</p>
+      <div class="progress-row">
+        <div class="progress-bar"><div class="progress-fill" style="width: ${entry.progress}%"></div></div>
+        <span class="progress-label">${entry.progress}%</span>
+      </div>
       <div class="entry-actions">
-        <button type="button" class="ghost-btn update-btn">Status aktualisieren</button>
+        <label class="progress-select-label">Fortschritt ändern
+          <select class="progress-select">${progressOptions}</select>
+        </label>
         <button type="button" class="ghost-btn delete-btn">Löschen</button>
       </div>
     `;
@@ -72,7 +81,7 @@ el("entryForm").addEventListener("submit", async (e) => {
         name: form.get("name"),
         firma: form.get("firma"),
         thema: form.get("thema"),
-        status: form.get("status"),
+        progress: form.get("progress"),
       }),
     });
     e.target.reset();
@@ -101,19 +110,20 @@ el("entryList").addEventListener("click", async (e) => {
       alert(err.message);
     }
   }
+});
 
-  if (e.target.classList.contains("update-btn")) {
-    const newStatus = prompt("Neue Statusmeldung:");
-    if (newStatus === null || !newStatus.trim()) return;
-    try {
-      await api(`/api/entries/${id}`, {
-        method: "PUT",
-        body: JSON.stringify({ status: newStatus }),
-      });
-      loadEntries();
-    } catch (err) {
-      alert(err.message);
-    }
+el("entryList").addEventListener("change", async (e) => {
+  if (!e.target.classList.contains("progress-select")) return;
+  const item = e.target.closest(".entry-item");
+  const id = item.dataset.id;
+  try {
+    await api(`/api/entries/${id}`, {
+      method: "PUT",
+      body: JSON.stringify({ progress: e.target.value }),
+    });
+    loadEntries();
+  } catch (err) {
+    alert(err.message);
   }
 });
 

@@ -73,7 +73,7 @@ label {
   color: var(--muted);
 }
 
-input, textarea {
+input, textarea, select {
   background: var(--surface-2);
   border: 1px solid #334155;
   border-radius: 10px;
@@ -84,7 +84,7 @@ input, textarea {
   resize: vertical;
 }
 
-input:focus, textarea:focus {
+input:focus, textarea:focus, select:focus {
   outline: 2px solid var(--accent);
   border-color: var(--accent);
 }
@@ -170,15 +170,54 @@ input:focus, textarea:focus {
   color: var(--accent);
 }
 
-.entry-item .status {
-  margin: 0 0 10px;
-  white-space: pre-wrap;
-  line-height: 1.4;
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 10px;
+  background: #334155;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.2s ease;
+}
+
+.progress-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 3.2em;
+  text-align: right;
 }
 
 .entry-actions {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 8px;
+  flex-wrap: wrap;
+}
+
+.progress-select-label {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+}
+
+.progress-select-label select {
+  padding: 6px 8px;
+  font-size: 0.85rem;
 }
 
 .entry-actions .ghost-btn {
