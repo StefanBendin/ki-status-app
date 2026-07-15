@@ -9,3 +9,5 @@ services:
     envVars:
       - key: DELETE_PASSWORD
         sync: false
+      - key: DATABASE_URL
+        sync: false

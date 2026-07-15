@@ -10,7 +10,9 @@ Installierbare Web-App (PWA): Jeder trägt ein, woran er/sie gerade mit KI arbei
 - Gemeinsame Liste aller Einträge, neueste zuerst
 - Löschen ist durch ein gemeinsames Passwort geschützt (siehe unten), damit nicht jeder Einträge anderer löschen kann
 - Installierbar auf jedem Smartphone als App (PWA: Manifest + Service Worker)
-- Daten werden als JSON-Datei gespeichert (`server/data/entries.json`), kein Datenbankserver nötig
+- Daten liegen dauerhaft in einer kostenlosen Postgres-Datenbank (siehe unten), überleben also
+  Redeploys und Neustarts. Lokal ohne konfigurierte Datenbank wird automatisch auf eine
+  JSON-Datei (`server/data/entries.json`) zurückgefallen, damit man ohne Zusatz-Setup testen kann.
 
 ## Lösch-Passwort
 
@@ -29,6 +31,10 @@ npm start
 
 Dann im Browser: http://localhost:3001
 
+Ohne `DATABASE_URL` werden die Einträge lokal in `server/data/entries.json` gespeichert – gut
+zum schnellen Testen. Für einen lokalen Test mit echter Datenbank einfach `DATABASE_URL` vor
+`npm start` setzen (siehe nächster Abschnitt).
+
 ## Als App installieren (PWA)
 
 1. Die App-URL (nach Deployment, siehe unten) auf dem Handy öffnen.
@@ -36,6 +42,20 @@ Dann im Browser: http://localhost:3001
 3. **iPhone/Safari:** Teilen-Symbol → "Zum Home-Bildschirm".
 
 Die App startet dann wie eine normale App im Vollbild, ohne Browser-Leiste.
+
+## Kostenlose Datenbank einrichten (Neon)
+
+Damit Einträge Redeploys und Neustarts überleben, braucht die App eine echte Datenbank statt
+der lokalen Datei. [Neon](https://neon.tech) bietet dafür eine kostenlose Postgres-Datenbank
+(keine Kreditkarte nötig, Speicher bleibt dauerhaft erhalten, auch wenn die Datenbank bei
+Inaktivität kurz "einschläft" und beim nächsten Zugriff automatisch wieder aufwacht).
+
+1. Auf [neon.tech](https://neon.tech) ein kostenloses Konto anlegen und ein neues Projekt
+   erstellen.
+2. Im Projekt-Dashboard die **Connection string** kopieren (Format
+   `postgres://user:passwort@host/datenbank?sslmode=require`).
+3. Diese Connection-String-URL als Umgebungsvariable `DATABASE_URL` in Render hinterlegen
+   (siehe nächster Abschnitt) – die App legt die benötigte Tabelle beim Start automatisch an.
 
 ## Deployment auf Render.com (kostenlos)
 
@@ -48,25 +68,25 @@ Die App startet dann wie eine normale App im Vollbild, ohne Browser-Leiste.
    ```
 2. Auf [render.com](https://render.com) einloggen (kostenloses Konto reicht) → **New** →
    **Blueprint** → das GitHub-Repo auswählen. Render erkennt automatisch `render.yaml`
-   mit `plan: free`. Da `DELETE_PASSWORD` als `sync: false` markiert ist, fragt Render beim
-   Erstellen nach einem Wert dafür – dort ein eigenes Lösch-Passwort eintragen (wird nicht
-   im Repo gespeichert).
+   mit `plan: free`. Da `DELETE_PASSWORD` und `DATABASE_URL` als `sync: false` markiert sind,
+   fragt Render beim Erstellen nach Werten dafür – dort das eigene Lösch-Passwort und die
+   Neon-Connection-String eintragen (werden nicht im Repo gespeichert).
+   - War der Render-Service schon vorher eingerichtet, `DATABASE_URL` stattdessen nachträglich
+     unter **Environment** beim bestehenden Service ergänzen und einmal manuell neu deployen.
 3. Deploy bestätigen. Render baut die App (`npm install` in `server/`) und startet sie
    (`npm start`).
 4. Nach dem ersten Deploy ist die App unter der von Render vergebenen URL erreichbar
    (z. B. `https://ki-status-app.onrender.com`) – öffentlich, ohne Login, komplett kostenlos.
 
-**Wichtig zu Speicher (kostenloser Plan):** Der Free-Plan hat kein persistentes Laufwerk –
-`entries.json` liegt im normalen Dateisystem des Containers. Nach 15 Minuten Inaktivität
-schläft der Dienst ein (dauert beim nächsten Aufruf ca. 30–60 Sekunden zum Aufwachen) und
-bei jedem Einschlafen/Redeploy werden die Einträge zurückgesetzt. Für ein "wer arbeitet
-gerade woran"-Board ist das meist unkritisch, da die Einträge ohnehin nur kurzfristig
-relevant sind.
-
-Falls dauerhafte Speicherung wichtiger wird als "kostenlos", kann später auf den
-**Starter-Plan** (kostenpflichtig, ca. 7 $/Monat) mit persistenter Disk umgestellt werden –
-dafür in `render.yaml` wieder eine `disk:`-Sektion und `envVars: DATA_DIR=/data` ergänzen.
+**Speicher (kostenloser Plan):** Der Render-Free-Plan hat kein persistentes Laufwerk, deshalb
+liegen die Einträge nicht mehr im Dateisystem des Containers, sondern in der Neon-Datenbank
+(siehe oben). Damit überleben sie Redeploys, Neustarts und das Einschlafen nach 15 Minuten
+Inaktivität (das Aufwachen dauert dann ca. 30–60 Sekunden). Ist `DATABASE_URL` nicht gesetzt,
+fällt die App automatisch auf die lokale Datei zurück – dann gehen Einträge bei jedem
+Neustart verloren.
 
 ## Daten sichern
 
-Die Einträge liegen in `server/data/entries.json`. Für ein Backup einfach diese Datei kopieren.
+Mit Neon: im Neon-Dashboard über **SQL Editor** `SELECT * FROM entries;` ausführen oder einen
+regulären Postgres-Dump ziehen. Ohne Datenbank (lokaler Fallback) liegen die Einträge in
+`server/data/entries.json` – für ein Backup einfach diese Datei kopieren.
