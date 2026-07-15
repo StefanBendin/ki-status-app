@@ -1,14 +1,14 @@
 # KI-Status Board
 
-Installierbare Web-App (PWA): Jeder trägt mit Login ein, woran er/sie gerade mit KI arbeitet
-(Name, Firma, Thema, Statusmeldung). Alle Einträge sind für alle angemeldeten Nutzer sichtbar.
+Installierbare Web-App (PWA): Jeder trägt ein, woran er/sie gerade mit KI arbeitet
+(Name, Firma, Thema, Statusmeldung). Alle Einträge sind für alle Nutzer sichtbar, kein Login nötig.
 
 ## Funktionen
 
-- Registrierung/Login (Benutzername + Passwort, Passwörter gehasht mit bcrypt)
-- Gemeinsame Liste aller Einträge, neueste zuerst
+- Formular für Name, Firma, Thema, Statusmeldung – ohne Anmeldung
+- Gemeinsame Liste aller Einträge, neueste zuerst, Status aktualisierbar/löschbar
 - Installierbar auf jedem Smartphone als App (PWA: Manifest + Service Worker)
-- Daten werden als JSON-Datei gespeichert (`server/data/`), kein Datenbankserver nötig
+- Daten werden als JSON-Datei gespeichert (`server/data/entries.json`), kein Datenbankserver nötig
 
 ## Lokal starten
 
@@ -18,9 +18,9 @@ npm install
 npm start
 ```
 
-Dann im Browser: http://localhost:3000
+Dann im Browser: http://localhost:3001
 
-## Auf dem Smartphone installieren
+## Als App installieren (PWA)
 
 1. Die App-URL (nach Deployment, siehe unten) auf dem Handy öffnen.
 2. **Android/Chrome:** Menü (⋮) → "App installieren" / "Zum Startbildschirm hinzufügen".
@@ -28,38 +28,34 @@ Dann im Browser: http://localhost:3000
 
 Die App startet dann wie eine normale App im Vollbild, ohne Browser-Leiste.
 
-## Deployment auf Render.com (empfohlen)
+## Deployment auf Render.com (kostenlos)
 
-Render.com bietet einen einfachen, verwalteten Node.js-Hosting-Dienst mit persistentem
-Speicher, sodass Einträge und Benutzer einen Neustart überleben.
-
-1. Dieses Verzeichnis (`ki-status-app`) in ein GitHub-Repository pushen:
+1. Dieses Verzeichnis (`ki-status-app`) in das GitHub-Repository pushen (Remote ist bereits
+   auf `github.com/StefanBendin/ki-status-app` konfiguriert):
    ```
-   git init
-   git add .
-   git commit -m "Initial commit: KI-Status Board"
-   git branch -M main
-   git remote add origin <DEINE-GITHUB-REPO-URL>
-   git push -u origin main
+   git add -A
+   git commit -m "Login entfernt, echter Gratis-Plan"
+   git push
    ```
-2. Auf [render.com](https://render.com) einloggen → **New** → **Blueprint** → das GitHub-Repo
-   auswählen. Render erkennt automatisch `render.yaml`.
-3. Deploy bestätigen. Render baut die App (`npm install` in `server/`) und startet sie (`npm start`).
+2. Auf [render.com](https://render.com) einloggen (kostenloses Konto reicht) → **New** →
+   **Blueprint** → das GitHub-Repo auswählen. Render erkennt automatisch `render.yaml`
+   mit `plan: free`.
+3. Deploy bestätigen. Render baut die App (`npm install` in `server/`) und startet sie
+   (`npm start`).
 4. Nach dem ersten Deploy ist die App unter der von Render vergebenen URL erreichbar
-   (z. B. `https://ki-status-app.onrender.com`) – diese URL kann jeder auf dem Smartphone
-   öffnen und installieren.
+   (z. B. `https://ki-status-app.onrender.com`) – öffentlich, ohne Login, komplett kostenlos.
 
-**Kosten:** `render.yaml` nutzt den **Starter-Plan** (aktuell ca. 7 $/Monat), da eine
-persistente Disk für Login-Daten und Einträge nötig ist – auf dem kostenlosen Plan
-würde das Dateisystem bei jedem Neustart geleert (alle Accounts und Einträge weg).
+**Wichtig zu Speicher (kostenloser Plan):** Der Free-Plan hat kein persistentes Laufwerk –
+`entries.json` liegt im normalen Dateisystem des Containers. Nach 15 Minuten Inaktivität
+schläft der Dienst ein (dauert beim nächsten Aufruf ca. 30–60 Sekunden zum Aufwachen) und
+bei jedem Einschlafen/Redeploy werden die Einträge zurückgesetzt. Für ein "wer arbeitet
+gerade woran"-Board ist das meist unkritisch, da die Einträge ohnehin nur kurzfristig
+relevant sind.
+
+Falls dauerhafte Speicherung wichtiger wird als "kostenlos", kann später auf den
+**Starter-Plan** (kostenpflichtig, ca. 7 $/Monat) mit persistenter Disk umgestellt werden –
+dafür in `render.yaml` wieder eine `disk:`-Sektion und `envVars: DATA_DIR=/data` ergänzen.
 
 ## Daten sichern
 
-Die Daten liegen in `server/data/users.json` und `server/data/entries.json` (lokal)
-bzw. unter `/data/` auf der Render-Disk. Für ein Backup einfach diese Dateien kopieren.
-
-## Sicherheitshinweis
-
-`JWT_SECRET` wird bei lokalem Start zufällig erzeugt (Login-Sitzungen verfallen dann bei
-jedem Neustart). Auf Render wird automatisch ein fester, zufälliger Wert generiert
-(`generateValue: true` in `render.yaml`), der über Neustarts hinweg stabil bleibt.
+Die Einträge liegen in `server/data/entries.json`. Für ein Backup einfach diese Datei kopieren.

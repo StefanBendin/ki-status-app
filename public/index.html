@@ -15,56 +15,26 @@
 <body>
   <header class="topbar">
     <h1>KI-Status Board</h1>
-    <button id="logoutBtn" class="ghost-btn hidden">Abmelden</button>
+    <button id="refreshBtn" class="ghost-btn">Aktualisieren</button>
   </header>
 
-  <main id="authView" class="view">
-    <div class="card">
-      <div class="tabs">
-        <button id="tabLogin" class="tab active">Anmelden</button>
-        <button id="tabRegister" class="tab">Registrieren</button>
-      </div>
-
-      <form id="loginForm" class="form">
-        <label>Benutzername
-          <input type="text" name="username" autocomplete="username" required />
-        </label>
-        <label>Passwort
-          <input type="password" name="password" autocomplete="current-password" required />
-        </label>
-        <button type="submit" class="primary-btn">Anmelden</button>
-      </form>
-
-      <form id="registerForm" class="form hidden">
-        <label>Name
-          <input type="text" name="name" required />
-        </label>
-        <label>Firma
-          <input type="text" name="firma" />
-        </label>
-        <label>Benutzername
-          <input type="text" name="username" autocomplete="username" required />
-        </label>
-        <label>Passwort
-          <input type="password" name="password" autocomplete="new-password" required minlength="4" />
-        </label>
-        <button type="submit" class="primary-btn">Registrieren</button>
-      </form>
-
-      <p id="authError" class="error hidden"></p>
-    </div>
-  </main>
-
-  <main id="appView" class="view hidden">
+  <main class="view">
     <section class="card">
       <h2>Neuer Eintrag</h2>
       <form id="entryForm" class="form">
+        <label>Name
+          <input type="text" name="name" required maxlength="100" placeholder="z.B. Max Mustermann" />
+        </label>
+        <label>Firma
+          <input type="text" name="firma" required maxlength="100" placeholder="z.B. ESV Erfurt" />
+        </label>
         <label>Thema
-          <input type="text" name="thema" placeholder="z.B. Angebot LV Elektro" required />
+          <input type="text" name="thema" required maxlength="200" placeholder="z.B. Angebot LV Elektro" />
         </label>
         <label>Statusmeldung
-          <textarea name="status" rows="3" placeholder="z.B. Prüfe Artikel-Matching, fast fertig" required></textarea>
+          <textarea name="status" rows="3" required maxlength="500" placeholder="z.B. Prüfe Artikel-Matching, fast fertig"></textarea>
         </label>
+        <p id="formError" class="error hidden"></p>
         <button type="submit" class="primary-btn">Eintragen</button>
       </form>
     </section>
@@ -72,7 +42,6 @@
     <section class="card">
       <div class="list-header">
         <h2>Aktuelle Einträge</h2>
-        <button id="refreshBtn" class="ghost-btn">Aktualisieren</button>
       </div>
       <ul id="entryList" class="entry-list"></ul>
       <p id="emptyState" class="muted hidden">Noch keine Einträge vorhanden.</p>

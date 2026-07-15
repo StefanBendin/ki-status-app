@@ -5,13 +5,4 @@ services:
     rootDir: server
     buildCommand: npm install
     startCommand: npm start
-    plan: starter
-    envVars:
-      - key: DATA_DIR
-        value: /data
-      - key: JWT_SECRET
-        generateValue: true
-    disk:
-      name: ki-status-data
-      mountPath: /data
-      sizeGB: 1
+    plan: free

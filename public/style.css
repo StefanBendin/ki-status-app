@@ -57,28 +57,6 @@ body {
   font-size: 1.05rem;
 }
 
-.tabs {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.tab {
-  flex: 1;
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  background: var(--surface-2);
-  color: var(--muted);
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.tab.active {
-  background: var(--accent);
-  color: #0f172a;
-}
-
 .form {
   display: flex;
   flex-direction: column;
@@ -193,9 +171,19 @@ input:focus, textarea:focus {
 }
 
 .entry-item .status {
-  margin: 0;
+  margin: 0 0 10px;
   white-space: pre-wrap;
   line-height: 1.4;
+}
+
+.entry-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.entry-actions .ghost-btn {
+  font-size: 0.8rem;
+  padding: 6px 10px;
 }
 
 .muted {
