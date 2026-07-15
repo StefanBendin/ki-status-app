@@ -5,6 +5,7 @@ const db = require("./db");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const DELETE_PASSWORD = process.env.DELETE_PASSWORD || "admin123";
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "..", "public")));
@@ -53,6 +54,10 @@ app.put("/api/entries/:id", (req, res) => {
 });
 
 app.delete("/api/entries/:id", (req, res) => {
+  const password = clean(req.body?.password, 100);
+  if (password !== DELETE_PASSWORD) {
+    return res.status(403).json({ error: "Falsches Passwort zum Löschen." });
+  }
   const entries = db.getEntries();
   const entry = entries.find((e) => e.id === req.params.id);
   if (!entry) return res.status(404).json({ error: "Eintrag nicht gefunden." });

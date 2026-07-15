@@ -6,9 +6,16 @@ Installierbare Web-App (PWA): Jeder trägt ein, woran er/sie gerade mit KI arbei
 ## Funktionen
 
 - Formular für Name, Firma, Thema, Statusmeldung – ohne Anmeldung
-- Gemeinsame Liste aller Einträge, neueste zuerst, Status aktualisierbar/löschbar
+- Gemeinsame Liste aller Einträge, neueste zuerst, Status frei aktualisierbar
+- Löschen ist durch ein gemeinsames Passwort geschützt (siehe unten), damit nicht jeder Einträge anderer löschen kann
 - Installierbar auf jedem Smartphone als App (PWA: Manifest + Service Worker)
 - Daten werden als JSON-Datei gespeichert (`server/data/entries.json`), kein Datenbankserver nötig
+
+## Lösch-Passwort
+
+Beim Löschen eines Eintrags wird ein Passwort abgefragt. Es wird über die Umgebungsvariable
+`DELETE_PASSWORD` gesetzt. Lokal ist der Standard `admin123` (siehe `server/server.js`) –
+für den produktiven Einsatz unbedingt ein eigenes Passwort in Render setzen (siehe unten).
 
 ## Lokal starten
 
@@ -39,7 +46,9 @@ Die App startet dann wie eine normale App im Vollbild, ohne Browser-Leiste.
    ```
 2. Auf [render.com](https://render.com) einloggen (kostenloses Konto reicht) → **New** →
    **Blueprint** → das GitHub-Repo auswählen. Render erkennt automatisch `render.yaml`
-   mit `plan: free`.
+   mit `plan: free`. Da `DELETE_PASSWORD` als `sync: false` markiert ist, fragt Render beim
+   Erstellen nach einem Wert dafür – dort ein eigenes Lösch-Passwort eintragen (wird nicht
+   im Repo gespeichert).
 3. Deploy bestätigen. Render baut die App (`npm install` in `server/`) und startet sie
    (`npm start`).
 4. Nach dem ersten Deploy ist die App unter der von Render vergebenen URL erreichbar

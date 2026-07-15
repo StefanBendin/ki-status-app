@@ -89,9 +89,17 @@ el("entryList").addEventListener("click", async (e) => {
   const id = item.dataset.id;
 
   if (e.target.classList.contains("delete-btn")) {
-    if (!confirm("Diesen Eintrag wirklich löschen?")) return;
-    await api(`/api/entries/${id}`, { method: "DELETE" });
-    loadEntries();
+    const password = prompt("Lösch-Passwort eingeben:");
+    if (password === null) return;
+    try {
+      await api(`/api/entries/${id}`, {
+        method: "DELETE",
+        body: JSON.stringify({ password }),
+      });
+      loadEntries();
+    } catch (err) {
+      alert(err.message);
+    }
   }
 
   if (e.target.classList.contains("update-btn")) {

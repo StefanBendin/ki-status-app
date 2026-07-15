@@ -6,3 +6,6 @@ services:
     buildCommand: npm install
     startCommand: npm start
     plan: free
+    envVars:
+      - key: DELETE_PASSWORD
+        sync: false
