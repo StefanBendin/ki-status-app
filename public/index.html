@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>KI-Status Board</title>
+  <meta name="theme-color" content="#0f172a" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>KI-Status Board</h1>
+    <button id="logoutBtn" class="ghost-btn hidden">Abmelden</button>
+  </header>
+
+  <main id="authView" class="view">
+    <div class="card">
+      <div class="tabs">
+        <button id="tabLogin" class="tab active">Anmelden</button>
+        <button id="tabRegister" class="tab">Registrieren</button>
+      </div>
+
+      <form id="loginForm" class="form">
+        <label>Benutzername
+          <input type="text" name="username" autocomplete="username" required />
+        </label>
+        <label>Passwort
+          <input type="password" name="password" autocomplete="current-password" required />
+        </label>
+        <button type="submit" class="primary-btn">Anmelden</button>
+      </form>
+
+      <form id="registerForm" class="form hidden">
+        <label>Name
+          <input type="text" name="name" required />
+        </label>
+        <label>Firma
+          <input type="text" name="firma" />
+        </label>
+        <label>Benutzername
+          <input type="text" name="username" autocomplete="username" required />
+        </label>
+        <label>Passwort
+          <input type="password" name="password" autocomplete="new-password" required minlength="4" />
+        </label>
+        <button type="submit" class="primary-btn">Registrieren</button>
+      </form>
+
+      <p id="authError" class="error hidden"></p>
+    </div>
+  </main>
+
+  <main id="appView" class="view hidden">
+    <section class="card">
+      <h2>Neuer Eintrag</h2>
+      <form id="entryForm" class="form">
+        <label>Thema
+          <input type="text" name="thema" placeholder="z.B. Angebot LV Elektro" required />
+        </label>
+        <label>Statusmeldung
+          <textarea name="status" rows="3" placeholder="z.B. Prüfe Artikel-Matching, fast fertig" required></textarea>
+        </label>
+        <button type="submit" class="primary-btn">Eintragen</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="list-header">
+        <h2>Aktuelle Einträge</h2>
+        <button id="refreshBtn" class="ghost-btn">Aktualisieren</button>
+      </div>
+      <ul id="entryList" class="entry-list"></ul>
+      <p id="emptyState" class="muted hidden">Noch keine Einträge vorhanden.</p>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
