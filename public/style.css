@@ -24,6 +24,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
   padding: calc(env(safe-area-inset-top) + 16px) 20px 16px;
   position: sticky;
   top: 0;
@@ -35,6 +36,30 @@ body {
 .topbar h1 {
   font-size: 1.25rem;
   margin: 0;
+  white-space: nowrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.logo-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 4px 8px;
+  flex-shrink: 0;
+}
+
+.logo-tile img {
+  display: block;
+  height: 28px;
+  width: auto;
 }
 
 .view {
@@ -229,4 +254,17 @@ input:focus, textarea:focus, select:focus {
   color: var(--muted);
   text-align: center;
   padding: 12px 0;
+}
+
+@media (max-width: 420px) {
+  .topbar h1 {
+    font-size: 1rem;
+  }
+  .logo-tile img {
+    height: 22px;
+  }
+  #refreshBtn {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
 }
